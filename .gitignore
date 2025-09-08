@@ -1,0 +1,19 @@
+# Environment variables
+.env
+streamlit/secrets.toml
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local virtual environment
+symptom_checker/
+
+chroma_db/
+
+# Ignore the raw data after pre-building the database
+data/
+
+# IDE/editor config
+.vscode/
+.idea/
