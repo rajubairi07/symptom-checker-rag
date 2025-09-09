@@ -23,29 +23,44 @@ def get_chroma_collection(api_key: str, embed_model: str):
         st.error(f"Failed to download database: {e}")
         return None
 
+    # Initialize the ChromaDB client - FIRST TRY THE SIMPLE APPROACH
     try:
+        # The chroma.sqlite3 file is in the root, so use the path directly
         client = chromadb.PersistentClient(path=local_db_path)
         
-        # FIRST: Try to get the collection without embedding function
-        try:
-            collection = client.get_collection(name="disease_symptoms")
-            st.sidebar.success("✓ Got collection without embedding function")
-        except:
-            # SECOND: Try with embedding function if first approach fails
-            embedding_func = embedding_functions.OpenAIEmbeddingFunction(
-                api_key=api_key,
-                model_name=embed_model
-            )
-            collection = client.get_collection(
-                name="disease_symptoms",
-                embedding_function=embedding_func
-            )
-            st.sidebar.success("✓ Got collection with embedding function")
+        # Get the collection directly - it should exist
+        embedding_func = embedding_functions.OpenAIEmbeddingFunction(
+            api_key=api_key,
+            model_name=embed_model
+        )
         
+        collection = client.get_collection(
+            name="disease_symptoms",
+            embedding_function=embedding_func
+        )
+        
+        # Verify the collection contents
         count = collection.count()
         st.sidebar.success(f"✅ {count} documents loaded")
+        
         return collection
         
     except Exception as e:
-        st.error(f"Failed to initialize ChromaDB: {e}")
+        st.error(f"Failed to get collection: {e}")
+        
+        # Debug: Show what collections actually exist
+        try:
+            collections = client.list_collections()
+            st.sidebar.write(f"Available collections: {[col.name for col in collections]}")
+            
+            # If disease_symptoms doesn't exist, try the first available collection
+            if collections:
+                collection = collections[0]
+                count = collection.count()
+                st.sidebar.warning(f"Using collection '{collection.name}' with {count} documents")
+                return collection
+                
+        except Exception as debug_e:
+            st.sidebar.error(f"Debug failed: {debug_e}")
+        
         return None
