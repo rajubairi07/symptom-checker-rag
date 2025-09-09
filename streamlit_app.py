@@ -29,6 +29,8 @@ st.set_page_config(
 
 # --- Sidebar ---
 with st.sidebar:
+
+    
     st.header("Database Status")
     try:
         # Pass the API key and model name to the function
