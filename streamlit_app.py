@@ -1,5 +1,3 @@
-# This is the crucial workaround for the sqlite3 issue on Streamlit Cloud
-# It MUST be the very first thing in the file
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
@@ -8,8 +6,8 @@ import streamlit as st
 from vectordb import get_chroma_collection
 from rag import rag_pipeline
 
-# --- Secret and Model Configuration ---
-# This will get keys from st.secrets when deployed, or from a local .env file.
+
+
 try:
     # Get secrets from Streamlit's secrets manager
     OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
