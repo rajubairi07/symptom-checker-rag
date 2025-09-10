@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-# MODIFIED: This function now accepts the API key, chat model, and the collection object.
+
 def rag_pipeline(
     query: str, 
     chat_history: list, 
@@ -9,13 +9,10 @@ def rag_pipeline(
     chat_model: str, 
     top_k: int = 5
 ):
-    """
-    Performs the RAG pipeline. It no longer initializes its own clients or collections.
-    """
-    # MODIFIED: Initialize the OpenAI client inside the function with the provided key.
+
+
     client = OpenAI(api_key=api_key)
 
-    # Perform query on the passed-in ChromaDB collection
     retrieved = collection.query(
         query_texts=[query],
         n_results=top_k
